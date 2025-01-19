@@ -1,10 +1,16 @@
 /* Общие стили */
 body {
     font-family: 'Arial', sans-serif;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
     background-color: #121212;
     color: #e0e0e0;
+}
+
+:root {
+    --primary-color: #007bff; /* Example primary color */
+    --secondary-color: #6c757d; /* Example secondary color */
 }
 
 /* Хедер */
@@ -327,12 +333,12 @@ footer p {
     margin-top: 40px;
 }
 .cta-button {
-    background: linear-gradient(90deg, #bb86fc, #ff628c);
+    background-color: var(--primary-color);
     color: white;
     text-decoration: none;
-    padding: 15px 30px;
+    padding: 10px 20px;
     font-size: 20px;
-    border-radius: 12px;
+    border-radius: 5px;
     font-weight: bold;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s, box-shadow 0.3s;
