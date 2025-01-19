@@ -5,8 +5,8 @@
     <h1 class="glow">Доступ запрещён</h1>
     <p>Войдите в аккаунт, чтобы получить доступ к этой странице.</p>
     <div class="unauthorized-actions">
-        <a href="{% url 'login' %}" class="action-button">Войти</a>
-        <a href="{% url 'register' %}" class="action-button">Зарегистрироваться</a>
+        <a href="{% url 'login' %}" class="unauthorized-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
+        <a href="{% url 'register' %}" class="unauthorized-button"><i class="fas fa-user-plus"></i> Зарегистрироваться</a>
     </div>
 </main>
 {% endblock %}

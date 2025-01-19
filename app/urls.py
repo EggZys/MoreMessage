@@ -8,6 +8,8 @@ from .views import (
     api_users_view,
     unauthorized_view,
     download_view,
+    download_file,
+    logout_view,
 )
 
 urlpatterns = [
@@ -15,8 +17,9 @@ urlpatterns = [
     path('profile/', profile_view, name='profile'),
     path('register/', register_view, name='register'),
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', LogoutView.as_view(next_page=reverse_lazy('login')), name='logout'),
+    path('logout/', logout_view, name='logout'),
     path('api/users/', api_users_view, name='api_users'),
     path('unauthorized/', unauthorized_view, name='unauthorized'),
     path('download/', download_view, name='download'),
+    path('download/windows/', download_file, name='download_windows'),
 ]

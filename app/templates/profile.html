@@ -1,31 +1,55 @@
 {% extends 'base.html' %}
-{% block title %}Profile{% endblock %}
+{% block title %}Профиль{% endblock %}
 {% block content %}
 <header>
     <div class="logo">MoreMessage</div>
     <div class="header-buttons">
-        <a href="{% url 'home' %}" class="header-button">Главная</a>
+        <a href="{% url 'home' %}" class="header-button"><i class="fas fa-home"></i> Главная</a>
     </div>
-    <a href="{% url 'profile' %}" class="profile-picture" title="Профиль"></a>
 </header>
+
 <main class="profile-container">
     {% if user.is_authenticated %}
     <div class="profile-header">
-        <div class="profile-picture"></div>
+        <div class="profile-picture">
+            <img src="https://dummyimage.com/150x150/cccccc/000000.png&text=Profile" alt="Profile Picture">
+        </div>
         <h1 class="profile-name">{{ user.username }}</h1>
         <p class="profile-email">{{ user.email }}</p>
     </div>
+
+    <div class="profile-stats">
+        <div class="stat-card">
+            <i class="fas fa-comments stat-icon"></i>
+            <h3>Сообщения</h3>
+            <p>1,234</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-friends stat-icon"></i>
+            <h3>Друзья</h3>
+            <p>567</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-alt stat-icon"></i>
+            <h3>Активность</h3>
+            <p>7 дней</p>
+        </div>
+    </div>
+
     <div class="profile-actions">
-        <a href="{% url 'home' %}" class="profile-button">В главное меню</a>
-        <a href="{% url 'logout' %}" class="profile-button">Выйти из профиля</a>
+        <a href="{% url 'home' %}" class="profile-button"><i class="fas fa-home"></i> Главная</a>
+        <a href="{% url 'logout' %}" class="profile-button"><i class="fas fa-sign-out-alt"></i> Выйти</a>
     </div>
     {% else %}
     <h2>Вы не вошли в аккаунт!</h2>
-    <a href="{% url 'login' %}" class="profile-button">Войти</a>
-    <a href="{% url 'register' %}" class="profile-button">Зарегистрироваться</a>
+    <div class="profile-actions">
+        <a href="{% url 'login' %}" class="profile-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
+        <a href="{% url 'register' %}" class="profile-button"><i class="fas fa-user-plus"></i> Зарегистрироваться</a>
+    </div>
     {% endif %}
 </main>
+
 <footer>
-    <p>&copy; 2023 MoreMessage. Все права защищены.</p>
+    <p>&copy; 2025 MoreMessage. Все права защищены.</p>
 </footer>
 {% endblock %}

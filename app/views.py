@@ -5,6 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from .forms import RegistrationForm
 from .models import CustomUser
+from django.http import FileResponse
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.contrib.auth import logout, login
 
 
 def home_view(request):
@@ -20,13 +25,32 @@ def register_view(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')
+            login(request, form.instance)
+            return redirect('home')
     else:
         form = RegistrationForm()
     return render(request, 'register.html', {'form': form})
 
 def download_view(request):
     return render(request, 'download.html')
+
+def download_file(request):
+    # Формируем полный путь к файлу
+    file_path = os.path.join(settings.MEDIA_ROOT, 'prog', 'MoreMessage.exe')
+    
+    # Печатаем путь в консоль (или лог)
+    print(f"Путь к файлу: {file_path}")
+    
+    # Если файл не найден, возвращаем сообщение с путём
+    if not os.path.exists(file_path):
+        return HttpResponse(f"Файл не найден. Путь: {file_path}", status=404)
+    
+    # Если найден, возвращаем файл
+    with open(file_path, 'rb') as file:
+        response = HttpResponse(file.read(), content_type='application/octet-stream')
+        response['Content-Disposition'] = f'attachment; filename="MoreMessage.exe"'
+        return response
+
 
 def api_users_view(request):
     users = CustomUser.objects.all()
@@ -35,3 +59,7 @@ def api_users_view(request):
 
 def unauthorized_view(request):
     return render(request, 'unauthorized.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')

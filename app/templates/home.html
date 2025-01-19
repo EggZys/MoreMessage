@@ -2,44 +2,79 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
-<header>
-    <div class="logo">MoreMessage</div>
-    <div class="header-buttons">
-        <a href="{% url 'download' %}" class="header-button">Скачать для Windows</a>
-    </div>
-    <a href="{% url 'profile' %}" class="profile-picture" title="Профиль"></a>
-</header>
+    <header>
+        <div class="logo">MoreMessage</div>
+        <div class="header-buttons">
+            <a href="{% url 'download' %}" class="header-button"><i class="fas fa-download"></i> Скачать</a>
+            <a href="{% url 'profile' %}" class="header-button"><i class="fas fa-user"></i> Профиль</a>
+        </div>
+    </header>
 {% else %}
-<header>
-    <div class="logo">MoreMessage</div>
-    <div class="header-buttons">
-        <a href="{% url 'download' %}" class="header-button">Скачать для Windows</a>
-    </div>
-    <a href="{% url 'login' %}" class="profile-picture" title="Войти"></a>
-</header>
+    <header>
+        <div class="logo">MoreMessage</div>
+        <div class="header-buttons">
+            <a href="{% url 'download' %}" class="header-button"><i class="fas fa-download"></i> Скачать</a>
+            <a href="{% url 'login' %}" class="header-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
+        </div>
+    </header>
 {% endif %}
+
 <main class="home-container">
-    <div class="intro-section">
-        <h1 class="title">Добро пожаловать в <span class="highlight">MoreMessage</span></h1>
-        <p class="subtitle">Ваше лучшее место для общения с друзьями и близкими</p>
-    </div>
-    <div class="features-section">
-        <h2>Основные возможности:</h2>
-        <ul class="features-list">
-            <li>Быстрая отправка текстовых сообщений</li>
-            <li>Отправка изображений, видео и файлов</li>
-            <li>Голосовые и видеозвонки</li>
-            <li>Создание групповых чатов</li>
-        </ul>
-    </div>
-    <div class="call-to-action">
-        <a href="{% url 'download' %}" class="cta-button">Скачать MoreMessage</a>
-    </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Общайтесь с близкими в <span class="highlight">MoreMessage</span></h1>
+            <p class="hero-subtitle">Быстрые сообщения, видеозвонки и обмен файлами — всё в одном месте.</p>
+            <div class="hero-actions">
+                <a href="{% url 'download' %}" class="cta-button">Начать сейчас</a>
+                <a href="#features" class="cta-button secondary">Узнать больше</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="https://dummyimage.com/500x400/cccccc/000000.png&text=MoreMessage" alt="MoreMessage App">
+        </div>        
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <h2 class="section-title">Почему MoreMessage?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-comments feature-icon"></i>
+                <h3>Быстрые сообщения</h3>
+                <p>Отправляйте текстовые сообщения мгновенно.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-video feature-icon"></i>
+                <h3>Видеозвонки</h3>
+                <p>Общайтесь лицом к лицу с друзьями и семьёй.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-upload feature-icon"></i>
+                <h3>Обмен файлами</h3>
+                <p>Делитесь изображениями, видео и документами.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users feature-icon"></i>
+                <h3>Групповые чаты</h3>
+                <p>Создавайте группы для общения с несколькими людьми.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <h2 class="cta-title">Начните общаться уже сегодня!</h2>
+        <p class="cta-subtitle">Скачайте MoreMessage и присоединяйтесь к миллионам пользователей.</p>
+        <a href="{% url 'download' %}" class="cta-button">Скачать сейчас</a>
+    </section>
 </main>
+
 <footer>
-    <div>
+    <div class="footer-links">
         <a href="#" class="footer-link">Контакты</a>
         <a href="#" class="footer-link">О нас</a>
+        <a href="#" class="footer-link">Политика конфиденциальности</a>
     </div>
     <p>&copy; 2025 MoreMessage. Все права защищены.</p>
 </footer>

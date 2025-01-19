@@ -6,7 +6,7 @@
     <form method="post" class="auth-form">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="auth-button">Зарегистрироваться</button>
+        <button type="submit" class="form-button">Зарегистрироваться</button>
     </form>
     <p class="auth-link">
         Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
