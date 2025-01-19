@@ -6,11 +6,17 @@
     <div class="header-buttons">
         <a href="{% url 'home' %}" class="header-button">Главная</a>
     </div>
-    <a href="{% url 'profile' %}"><div class="profile-picture"></div></a>
+    <a href="{% url 'profile' %}" class="profile-picture" title="Профиль"></a>
 </header>
 <main class="download-container">
-    <h1 class="glow">Загрузить приложение</h1>
-    <p>Скачайте наше приложение для удобного общения и мониторинга.</p>
-    <a href="№" class="download-button">Скачать</a>
+    <h1 class="title">Скачать MoreMessage</h1>
+    <p>Выберите свою операционную систему:</p>
+    <div class="download-buttons">
+        <a href="#" class="download-button">Windows</a>
+        <a href="#" class="download-button">MacOS</a>
+    </div>
 </main>
+<footer>
+    <p>&copy; 2023 MoreMessage. Все права защищены.</p>
+</footer>
 {% endblock %}
