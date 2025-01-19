@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+    <header>
+        <div class="logo">MoreMessage</div>
+        <div class="header-buttons">
+            <a href="{% url 'home' %}" class="header-button">Главная</a>
+        </div>
+        <div class="profile-picture"></div>
+    </header>
+    {% if user.is_authenticated %}
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-picture"></div>
+                <div class="profile-name">{{ user.username }}</div>
+                <div class="profile-email">{{ user.email }}</div>
+            </div>
+            <div class="profile-buttons">
+                <a href="{% url 'home' %}" class="profile-button">В главное меню</a>
+                <a href="{% url 'logout' %}"><button class="profile-button">Выйти из профиля</button></a>
+            </div>
+        </div>
+    {% else %}
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>Вы не вошли в аккаунт!</h2>
+                <a href="{% url 'login' %}"><button class="profile-button">Войти</button></a>
+                <a href="{% url 'register' %}"><button class="profile-button">Зарегистрироваться</button></a>
+            </div>
+            <div class="profile-buttons">
+                <a href="{% url 'home' %}" class="profile-button">В главное меню</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

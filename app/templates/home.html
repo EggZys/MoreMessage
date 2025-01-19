@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{% if user.is_authenticated %}
+<header>
+    <div class="logo">MoreMessage</div>
+    <div class="header-buttons">
+        <a href="{% url 'download' %}" class="header-button">Скачать для Windows</a>
+    </div>
+    <a href="{% url 'profile' %}" class="profile-picture" title="Профиль"></a>
+</header>
+{% else %}
+<header>
+    <div class="logo">MoreMessage</div>
+    <div class="header-buttons">
+        <a href="{% url 'download' %}" class="header-button">Скачать для Windows</a>
+    </div>
+    <a href="{% url 'login' %}" class="profile-picture" title="Войти"></a>
+</header>
+{% endif %}
+<main class="home-container">
+    <div class="intro-section">
+        <h1 class="title">Добро пожаловать в <span class="highlight">MoreMessage</span></h1>
+        <p class="subtitle">Ваше лучшее место для общения с друзьями и близкими</p>
+    </div>
+    <div class="features-section">
+        <h2>Основные возможности:</h2>
+        <ul class="features-list">
+            <li>Быстрая отправка текстовых сообщений</li>
+            <li>Отправка изображений, видео и файлов</li>
+            <li>Голосовые и видеозвонки</li>
+            <li>Создание групповых чатов</li>
+        </ul>
+    </div>
+    <div class="call-to-action">
+        <a href="{% url 'download' %}" class="cta-button">Скачать MoreMessage</a>
+    </div>
+</main>
+<footer>
+    <div>
+        <a href="#" class="footer-link">Контакты</a>
+        <a href="#" class="footer-link">О нас</a>
+    </div>
+    <p>&copy; 2025 MoreMessage. Все права защищены.</p>
+</footer>
+{% endblock %}

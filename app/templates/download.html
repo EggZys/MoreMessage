@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Download{% endblock %}
+{% block content %}
+<header>
+    <div class="logo">MoreMessage</div>
+    <div class="header-buttons">
+        <a href="{% url 'home' %}" class="header-button">Главная</a>
+    </div>
+    <a href="{% url 'profile' %}"><div class="profile-picture"></div></a>
+</header>
+<main class="download-container">
+    <h1 class="glow">Загрузить приложение</h1>
+    <p>Скачайте наше приложение для удобного общения и мониторинга.</p>
+    <a href="№" class="download-button">Скачать</a>
+</main>
+{% endblock %}
