@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
 from django.core.serializers import serialize
 from .forms import RegistrationForm
 from .models import CustomUser
-from django.http import FileResponse
 import os
 from django.conf import settings
 from django.http import HttpResponse
