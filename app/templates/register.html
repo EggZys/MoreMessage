@@ -5,9 +5,12 @@
     <h1 class="auth-title">Регистрация</h1>
     <form method="post" class="auth-form">
         {% csrf_token %}
-        {{ form.label }}
-        {{ form.username }}
-        {{ form.as_p }}
+        {% for field in form %}
+            <div>
+                {{ field.label }}
+                {{ field }}
+            </div>
+        {% endfor %}
         <button type="submit" class="form-button">Зарегистрироваться</button>
     </form>
     <p class="auth-link">

@@ -10,7 +10,10 @@ from .views import (
     download_view,
     download_file,
     logout_view,
+    ChatMessageListCreate,
 )
+from rest_framework.authtoken.views import obtain_auth_token
+
 
 urlpatterns = [
     path('', home_view, name='home'),
@@ -19,7 +22,9 @@ urlpatterns = [
     path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', logout_view, name='logout'),
     path('api/users/', api_users_view, name='api_users'),
+    path('api/messages/', ChatMessageListCreate.as_view(), name='message-list'),
     path('unauthorized/', unauthorized_view, name='unauthorized'),
     path('download/', download_view, name='download'),
     path('download/windows/', download_file, name='download_windows'),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]

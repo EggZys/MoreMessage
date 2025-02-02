@@ -7,6 +7,11 @@ import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.contrib.auth import logout, login
+from rest_framework import generics
+from .models import ChatMessage
+from .serializers import ChatMessageSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 
 
 def home_view(request):
@@ -21,8 +26,12 @@ def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            login(request, form.instance)
+            user = form.save()
+            
+            # Автоматически создаем токен для нового пользователя
+            Token.objects.create(user=user)
+            
+            login(request, user)
             return redirect('home')
     else:
         form = RegistrationForm()
@@ -60,3 +69,11 @@ def unauthorized_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+class ChatMessageListCreate(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]  # Добавить эту строку
+    queryset = ChatMessage.objects.all().order_by('-created_at')[:100]
+    serializer_class = ChatMessageSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
