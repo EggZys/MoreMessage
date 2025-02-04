@@ -261,10 +261,20 @@ class ChatInterface:
         message = self.new_message.value.strip()
         if not message:
             return
-        
+
+        timestamp = datetime.now().strftime("%H:%M:%S")
+
+        # Локально добавляем сообщение в список перед отправкой
+        self.messages.append({
+            "user": self.username,
+            "text": message,
+            "time": timestamp
+        })
+        self.update_chat_display()  # Обновляем UI немедленно
+
         try:
             headers = {
-                "Authorization": f"Token {self.auth_token}",  # Используем токен
+                "Authorization": f"Token {self.auth_token}",
                 "Content-Type": "application/json"
             }
             response = requests.post(
@@ -272,15 +282,15 @@ class ChatInterface:
                 json={"text": message},
                 headers=headers
             )
-            if response.status_code == 201:
-                self.load_messages()  # Обновляем сообщения
-            else:
+            if response.status_code != 201:
                 logging.error(f"Ошибка API: {response.status_code}")
         except Exception as e:
             logging.error(f"Ошибка отправки: {str(e)}")
-        
+
         self.new_message.value = ""
         self.page.update()
+        print(response.status_code, response.text)
+
 
     def load_messages(self):
         """Загрузка сообщений с сервера"""
@@ -343,7 +353,7 @@ class ChatInterface:
                     overflow=ft.TextOverflow.ELLIPSIS
                 )
             ], spacing=5),
-            bgcolor=self.primary_color if is_my_message else ft.Colors.SURFACE_VARIANT,
+            bgcolor=self.primary_color if is_my_message else ft.Colors.ON_SURFACE_VARIANT,
             padding=15,
             border_radius=15,
             alignment=ft.alignment.center_left,
@@ -351,9 +361,9 @@ class ChatInterface:
                 left=100 if not is_my_message else 0,
                 right=0 if not is_my_message else 100
             ),
-            width=300,  # Ширина контейнера
-            max_width=400  # Максимальная ширина
+            width=300  # Ширина контейнера
         )
+
 
     def update_chat_display(self):
         """Обновление отображения с красивыми сообщениями"""

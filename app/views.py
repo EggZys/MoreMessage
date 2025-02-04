@@ -12,6 +12,10 @@ from .models import ChatMessage
 from .serializers import ChatMessageSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 
 
 def home_view(request):
@@ -77,3 +81,14 @@ class ChatMessageListCreate(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class UserDetailView(APIView):
+    def get(self, request, username):
+        try:
+            user = CustomUser.objects.get(username=username)
+            return Response({
+                "username": user.username,
+                "email": user.email
+            })
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)

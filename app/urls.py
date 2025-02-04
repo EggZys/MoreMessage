@@ -11,6 +11,7 @@ from .views import (
     download_file,
     logout_view,
     ChatMessageListCreate,
+    UserDetailView,
 )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -27,4 +28,5 @@ urlpatterns = [
     path('download/', download_view, name='download'),
     path('download/windows/', download_file, name='download_windows'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path("api/users/<str:username>/", UserDetailView.as_view(), name="user-detail"),
 ]
