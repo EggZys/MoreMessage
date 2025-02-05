@@ -1,12 +1,109 @@
 {% extends 'base.html' %}
-{% block title %}Unauthorized{% endblock %}
+{% block title %}Доступ запрещён{% endblock %}
 {% block content %}
-<main class="unauthorized-container">
-    <h1 class="glow">Доступ запрещён</h1>
-    <p>Войдите в аккаунт, чтобы получить доступ к этой странице.</p>
-    <div class="unauthorized-actions">
-        <a href="{% url 'login' %}" class="unauthorized-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
-        <a href="{% url 'register' %}" class="unauthorized-button"><i class="fas fa-user-plus"></i> Зарегистрироваться</a>
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
+<main class="auth-container" style="min-height: 100vh;">
+    <div class="glass-card" style="max-width: 600px; text-align: center;">
+        <div class="error-icon" style="font-size: 5rem; margin-bottom: 2rem;">
+            <i class="fas fa-lock" style="background: var(--gradient); 
+               -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+        </div>
+        
+        <h1 class="gradient-text" style="font-size: 2.5rem; margin-bottom: 1.5rem;">
+            Доступ ограничен
+        </h1>
+        
+        <p class="error-description" style="color: #A1A1AA; margin-bottom: 2.5rem;">
+            Для просмотра этой страницы требуется авторизация. Пожалуйста, войдите в систему 
+            или зарегистрируйтесь для получения доступа.
+        </p>
+
+        <div class="unauthorized-actions" style="display: grid; gap: 1rem;">
+            <a href="{% url 'login' %}" class="auth-button primary-btn hover-scale">
+                <i class="fas fa-sign-in-alt"></i> Войти в аккаунт
+            </a>
+            <a href="{% url 'register' %}" class="auth-button secondary-btn hover-scale">
+                <i class="fas fa-user-plus"></i> Создать аккаунт
+            </a>
+        </div>
+
+        <div class="additional-links" style="margin-top: 2rem;">
+            <a href="{% url 'home' %}" class="footer-link">
+                <i class="fas fa-arrow-left"></i> Вернуться на главную
+            </a>
+        </div>
     </div>
 </main>
+
+<style>
+    .error-icon {
+        animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
+    
+    .primary-btn {
+        background: var(--gradient);
+        background-size: 200% auto;
+    }
+    
+    .secondary-btn {
+        background: var(--card-bg);
+        border: 2px solid var(--primary);
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: scale(1.02);
+    }
+    
+    .auth-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        padding: 1rem;
+        border-radius: 0.7rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        width: 95%;
+    }
+    
+    .auth-link {
+        color: var(--light);
+        text-decoration: none;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .auth-link:hover {
+        opacity: 1;
+        color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+        .glass-card {
+            padding: 1.5rem;
+        }
+        
+        .gradient-text {
+            font-size: 2rem !important;
+        }
+        
+        .error-icon {
+            font-size: 3.5rem !important;
+        }
+    }
+</style>
 {% endblock %}

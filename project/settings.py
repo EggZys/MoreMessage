@@ -47,6 +47,7 @@ AUTH_USER_MODEL = 'app.CustomUser'
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -163,3 +165,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CSRF_TRUSTED_ORIGINS = [
     'https://xtvge5bl6.localto.net'
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+ASGI_APPLICATION = "project.asgi.application"

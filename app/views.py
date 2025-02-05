@@ -74,6 +74,9 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
+def coming_view(request):
+    return render(request, 'coming.html')
+
 class ChatMessageListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]  # Добавить эту строку
     queryset = ChatMessage.objects.all().order_by('-created_at')[:100]

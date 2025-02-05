@@ -1,81 +1,126 @@
 {% extends 'base.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
+    <div class="blur-effect" style="top: -200px; left: -200px;"></div>
+    <div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
 {% if user.is_authenticated %}
     <header>
-        <div class="logo">MoreMessage</div>
-        <div class="header-buttons">
-            <a href="{% url 'download' %}" class="header-button"><i class="fas fa-download"></i> Скачать</a>
-            <a href="{% url 'profile' %}" class="header-button"><i class="fas fa-user"></i> Профиль</a>
-        </div>
+        <nav class="nav-container">
+            <a class="logo" href="">MoreMessage</a>
+            <div class="nav-buttons">
+                <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small">
+                    <i class="fas fa-download"></i> Скачать
+                </a>
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            </div>
+        </nav>
     </header>
 {% else %}
     <header>
-        <div class="logo">MoreMessage</div>
-        <div class="header-buttons">
-            <a href="{% url 'download' %}" class="header-button"><i class="fas fa-download"></i> Скачать</a>
-            <a href="{% url 'login' %}" class="header-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
-        </div>
+        <nav class="nav-container">
+            <a class="logo" href="">MoreMessage</a>
+            <div class="nav-buttons">
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            </div>
+        </nav>
     </header>
 {% endif %}
 
-<main class="home-container">
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">Общайтесь с близкими в <span class="highlight">MoreMessage</span></h1>
-            <p class="hero-subtitle">Быстрые сообщения, видеозвонки и обмен файлами — всё в одном месте.</p>
-            <div class="hero-actions">
-                <a href="{% url 'download' %}" class="cta-button">Начать сейчас</a>
-                <a href="#features" class="cta-button secondary">Узнать больше</a>
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">Новый уровень общения</h1>
+            <p class="hero-description">
+                Обменивайтесь сообщениями, файлами и эмоциями в реальном времени. 
+                Защищённое соединение и инновационные функции для вашего комфорта.
+            </p>
+            <div class="hero-cta">
+                <a href="#download" class="nav-button primary-btn" style="padding: 1.2rem 2.5rem;">
+                    Начать бесплатно
+                </a>
+                <a href="#features" class=" primary-batn nav-button" style="padding: 1.2rem 2.5rem;">
+                    Узнать больше
+                </a>
             </div>
         </div>
         <div class="hero-image">
-            <img src="https://dummyimage.com/500x400/cccccc/000000.png&text=MoreMessage" alt="MoreMessage App">
-        </div>        
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <h2 class="section-title">Почему MoreMessage?</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <i class="fas fa-comments feature-icon"></i>
-                <h3>Быстрые сообщения</h3>
-                <p>Отправляйте текстовые сообщения мгновенно.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-video feature-icon"></i>
-                <h3>Видеозвонки</h3>
-                <p>Общайтесь лицом к лицу с друзьями и семьёй.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-file-upload feature-icon"></i>
-                <h3>Обмен файлами</h3>
-                <p>Делитесь изображениями, видео и документами.</p>
-            </div>
-            <div class="feature-card">
-                <i class="fas fa-users feature-icon"></i>
-                <h3>Групповые чаты</h3>
-                <p>Создавайте группы для общения с несколькими людьми.</p>
-            </div>
+            <img src="https://dummyimage.com/600x500/6366F1/fff.png&text=App+Preview" alt="Интерфейс MoreMessage">
         </div>
-    </section>
-
-    <!-- Call to Action Section -->
-    <section class="cta-section">
-        <h2 class="cta-title">Начните общаться уже сегодня!</h2>
-        <p class="cta-subtitle">Скачайте MoreMessage и присоединяйтесь к миллионам пользователей.</p>
-        <a href="{% url 'download' %}" class="cta-button">Скачать сейчас</a>
-    </section>
-</main>
-
-<footer>
-    <div class="footer-links">
-        <a href="#" class="footer-link">Контакты</a>
-        <a href="#" class="footer-link">О нас</a>
-        <a href="#" class="footer-link">Политика конфиденциальности</a>
     </div>
-    <p>&copy; 2025 MoreMessage. Все права защищены.</p>
-</footer>
+</section>
+
+<section class="features-section" id="features">
+    <h2 class="section-title">Превосходство в деталях</h2>
+    <div class="features-grid">
+        <div class="feature-card">
+            <i class="fas fa-shield-alt feature-icon"></i>
+            <h3>Военная защита</h3>
+            <p>End-to-end шифрование и двухфакторная аутентификация</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-bolt feature-icon"></i>
+            <h3>Мгновенная скорость</h3>
+            <p>Оптимизированная сеть доставки сообщений</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-infinity feature-icon"></i>
+            <h3>Безлимитный обмен</h3>
+            <p>Отправляйте файлы до 10 ГБ без ограничений</p>
+        </div>
+    </div>
+</section>
+
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">1.5M+</div>
+            <p>Довольных пользователей</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">99.9%</div>
+            <p>Надёжность соединения</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">150+</div>
+            <p>Стран доступно</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="cta-content">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Готовы начать?</h2>
+        <p style="margin-bottom: 2rem; color: #A1A1AA;">
+            Присоединяйтесь к революции в мире мессенджеров
+        </p>
+        <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small" style="padding: 1.2rem 3rem;">
+            <i class="fas fa-rocket"></i> Начать сейчас
+        </a>
+    </div>
+</section>
+<script>
+    // Анимация хедера при скролле
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header');
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+    });
+
+    // Плавный скролл для якорей
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -1,22 +1,61 @@
 {% extends 'base.html' %}
-{% block title %}Download{% endblock %}
+{% block title %}Скачать{% endblock %}
 {% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
 <header>
-    <div class="logo">MoreMessage</div>
-    <div class="header-buttons">
-        <a href="{% url 'home' %}" class="header-button"><i class="fas fa-home"></i> Главная</a>
-    </div>
-    <a href="{% url 'profile' %}" class="profile-picture" title="Профиль"></a>
+    <nav class="nav-container">
+        <a class="logo" href="{% url 'home' %}">MoreMessage</a>
+        <div class="nav-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            {% endif %}
+            <a href="{% url 'home' %}" class="nav-button primary-btn">
+                <i class="fas fa-home"></i> Главная
+            </a>
+        </div>
+    </nav>
 </header>
-<main class="download-container">
-    <h1 class="title">Скачать MoreMessage</h1>
-    <p>Выберите свою операционную систему:</p>
-    <div class="download-buttons">
-        <a href="{% url 'download_windows' %}" class="download-button"><i class="fab fa-windows"></i> Windows</a>
-        <a href="#" class="download-button"><i class="fab fa-apple"></i> MacOS</a>
+
+<main class="cta-section" style="padding: 8rem 5% 4rem;">
+    <div class="hero-content" style="max-width: 800px; text-align: center;">
+        <h1 class="hero-title" style="font-size: 2.8rem;">Скачать MoreMessage</h1>
+        <p class="hero-description" style="margin-bottom: 3rem;">
+            Выберите вашу операционную систему для начала загрузки
+        </p>
+
+        <div class="features-grid" style="max-width: 600px; margin: 0 auto;">
+            <a href="{% url 'download_windows' %}" class="feature-card" style="cursor: pointer; text-decoration: none;">
+                <i class="fab fa-windows feature-icon"></i>
+                <h3>Windows</h3>
+                <p>Версия 2.1.3 · 64-bit · EXE</p>
+            </a>
+            <a href="#" class="feature-card" style="cursor: pointer; text-decoration: none;">
+                <i class="fab fa-apple feature-icon"></i>
+                <h3>macOS</h3>
+                <p>Версия 2.1.3 · Universal · DMG</p>
+            </a>
+        </div>
+
+        <div class="stats-grid" style="margin: 4rem auto 0; max-width: 500px;">
+            <div class="stat-card">
+                <div class="stat-number"><i class="fas fa-download"></i></div>
+                <p>Последняя версия</p>
+                <p style="color: var(--primary); font-weight: 500;">2.1.3</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number"><i class="fas fa-clock"></i></div>
+                <p>Обновлено</p>
+                <p style="color: var(--primary); font-weight: 500;">15.07.2024</p>
+            </div>
+        </div>
     </div>
 </main>
-<footer>
-    <p>&copy; 2025 MoreMessage. Все права защищены.</p>
-</footer>
 {% endblock %}

@@ -1,55 +1,109 @@
 {% extends 'base.html' %}
 {% block title %}Профиль{% endblock %}
 {% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
 <header>
-    <div class="logo">MoreMessage</div>
-    <div class="header-buttons">
-        <a href="{% url 'home' %}" class="header-button"><i class="fas fa-home"></i> Главная</a>
-    </div>
+    <nav class="nav-container">
+        <a class="logo" href="{% url 'home' %}">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'home' %}" class="nav-button primary-btn">
+                <i class="fas fa-home"></i> Главная
+            </a>
+            <a href="{% url 'logout' %}" class="nav-button primary-btn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </a>
+        </div>
+    </nav>
 </header>
 
-<main class="profile-container">
-    {% if user.is_authenticated %}
-    <div class="profile-header">
-        <div class="profile-picture">
-            <img src="https://dummyimage.com/150x150/cccccc/000000.png&text=Profile" alt="Profile Picture">
+<main class="hero-section" style="padding-top: 8rem;">
+    <div class="hero-content" style="max-width: 1200px;">
+        {% if user.is_authenticated %}
+        <div class="profile-header" style="text-align: center; position: relative;">
+            <div class="avatar-container" style="position: relative; display: inline-block;">
+                <div class="avatar-glow" style="position: absolute; width: 100%; height: 100%; border-radius: 50%; 
+                     background: var(--gradient); filter: blur(20px); opacity: 0.3; z-index: -1;"></div>
+                <img src="https://dummyimage.com/180x180/6366F1/fff.png&text={{ user.username|first|upper }}" 
+                     alt="Аватар" 
+                     class="hover-scale"
+                     style="border-radius: 50%; width: 180px; border: 3px solid var(--primary); transition: transform 0.3s ease;">
+                <div class="online-status" 
+                     style="position: absolute; bottom: 15px; right: 15px; width: 20px; height: 20px; 
+                     background: #10B981; border: 3px solid var(--card-bg); border-radius: 50%;"></div>
+            </div>
+            <h1 class="hero-title" style="font-size: 2.8rem; margin: 1.5rem 0 0.5rem;">
+                {{ user.username }}
+                <i class="fas fa-badge-check" style="color: var(--primary); font-size: 1.4rem; vertical-align: middle;"></i>
+            </h1>
+            <p class="hero-description" style="font-size: 1.2rem; color: #A1A1AA;">
+                <i class="fas fa-envelope"></i> {{ user.email }}
+            </p>
+            <div class="achievements" style="margin: 2rem 0;">
+                <span class="achievement-badge" style="display: inline-block; padding: 8px 16px; 
+                      background: var(--card-bg); border-radius: 20px; margin: 0 5px;">
+                    <i class="fas fa-medal" style="color: #F59E0B;"></i> Новичок
+                </span>
+                <span class="achievement-badge" style="display: inline-block; padding: 8px 16px; 
+                      background: var(--card-bg); border-radius: 20px; margin: 0 5px;">
+                    <i class="fas fa-comment-dots" style="color: #3B82F6;"></i> Активный
+                </span>
+            </div>
         </div>
-        <h1 class="profile-name">{{ user.username }}</h1>
-        <p class="profile-email">{{ user.email }}</p>
-    </div>
 
-    <div class="profile-stats">
-        <div class="stat-card">
-            <i class="fas fa-comments stat-icon"></i>
-            <h3>Сообщения</h3>
-            <p>1,234</p>
+        <div class="stats-grid" style="margin: 4rem 0; position: relative;">
+            <div class="stats-decoration" style="position: absolute; width: 100%; height: 100%; 
+                 background: var(--gradient); filter: blur(80px); opacity: 0.1; z-index: -1;"></div>
+            
+            <div class="stat-card hover-scale" style="transform-origin: center;">
+                <div class="stat-number pulse">Soon...</div>
+                <p><i class="fas fa-comments gradient-icon"></i> Сообщений</p>
+                <div class="progress-bar" style="height: 4px; background: rgba(255,255,255,0.1); margin-top: 15px;">
+                    <div style="width: 65%; height: 100%; background: var(--primary); border-radius: 2px;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card hover-scale" style="transform-origin: center;">
+                <div class="stat-number pulse">Soon...</div>
+                <p><i class="fas fa-user-friends gradient-icon"></i> Друзей</p>
+                <div class="progress-bar" style="height: 4px; background: rgba(255,255,255,0.1); margin-top: 15px;">
+                    <div style="width: 85%; height: 100%; background: var(--secondary); border-radius: 2px;"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card hover-scale" style="transform-origin: center;">
+                <div class="stat-number pulse">Soon...</div>
+                <p><i class="fas fa-calendar-alt gradient-icon"></i> Дней активности</p>
+                <div class="progress-bar" style="height: 4px; background: rgba(255,255,255,0.1); margin-top: 15px;">
+                    <div style="width: 30%; height: 100%; background: var(--primary); border-radius: 2px;"></div>
+                </div>
+            </div>
         </div>
-        <div class="stat-card">
-            <i class="fas fa-friends stat-icon"></i>
-            <h3>Друзья</h3>
-            <p>567</p>
-        </div>
-        <div class="stat-card">
-            <i class="fas fa-calendar-alt stat-icon"></i>
-            <h3>Активность</h3>
-            <p>7 дней</p>
-        </div>
-    </div>
 
-    <div class="profile-actions">
-        <a href="{% url 'home' %}" class="profile-button"><i class="fas fa-home"></i> Главная</a>
-        <a href="{% url 'logout' %}" class="profile-button"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+        <div class="activity-timeline" style="background: var(--card-bg); border-radius: 1.5rem; padding: 2rem; 
+             margin: 3rem 0; position: relative; overflow: hidden;">
+            <h3 style="margin-bottom: 1.5rem; color: var(--light);">
+                <i class="fas fa-history"></i> Последняя активность
+            </h3>
+            <div class="timeline-item" style="display: flex; align-items: center; padding: 1rem; 
+                 background: rgba(255,255,255,0.03); border-radius: 0.8rem; margin-bottom: 1rem;">
+                <div class="timeline-icon" style="width: 40px; height: 40px; border-radius: 50%; 
+                     background: var(--primary); display: flex; align-items: center; justify-content: center; 
+                     margin-right: 1rem;">
+                    <i class="fas fa-comment" style="color: white; font-size: 0.9rem;"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 500;">Новое сообщение</div>
+                    <div style="font-size: 0.9rem; color: #A1A1AA;">2 часа назад</div>
+                </div>
+            </div>
+            <!-- Добавьте больше элементов активности -->
+        </div>
+
+        {% else %}
+        <!-- Существующий контент для неавторизованных пользователей -->
+        {% endif %}
     </div>
-    {% else %}
-    <h2>Вы не вошли в аккаунт!</h2>
-    <div class="profile-actions">
-        <a href="{% url 'login' %}" class="profile-button"><i class="fas fa-sign-in-alt"></i> Войти</a>
-        <a href="{% url 'register' %}" class="profile-button"><i class="fas fa-user-plus"></i> Зарегистрироваться</a>
-    </div>
-    {% endif %}
 </main>
-
-<footer>
-    <p>&copy; 2025 MoreMessage. Все права защищены.</p>
-</footer>
 {% endblock %}

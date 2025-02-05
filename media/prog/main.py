@@ -7,6 +7,8 @@ import logging
 from passlib.hash import django_pbkdf2_sha256
 from datetime import datetime
 import socket
+import asyncio
+import websockets
 
 hostname = socket.gethostname()
 ip_address = socket.gethostbyname(hostname)
@@ -23,17 +25,32 @@ MAX_LOGIN_ATTEMPTS = 3  # Максимальное количество попы
 BLOCK_TIME = 60  # Время блокировки в секундах после превышения попыток
 
 class ChatInterface:
-    def __init__(self, page: ft.Page, username: str, theme_mode: ft.ThemeMode, language: str, auth_token: str):
+    def __init__(self, page, username, theme_mode, language, auth_token):
         self.page = page
         self.username = username
         self.theme_mode = theme_mode
         self.language = language
-        self.auth_token = auth_token  # Добавляем атрибут
+        self.auth_token = auth_token
         self.messages = []
-        
-        # Загрузка данных пользователя
-        self.user_data = self.load_user_data()
+        self.ws = None  # WebSocket клиент
         self.initialize_ui()
+        asyncio.create_task(self.connect_websocket())  # 🚀 Запускаем WebSocket
+    
+    async def connect_websocket(self):
+        """🔌 Подключаемся к WebSocket"""
+        try:
+            self.ws = await websockets.connect("ws://127.0.0.1:8000/ws/chat/")
+            print("✅ Подключено к WebSocket!")
+
+            while True:
+                message = await self.ws.recv()
+                data = json.loads(message)
+                print(f"📥 [WebSocket] Получено сообщение: {data}")  # 👀 Проверяем, приходят ли чужие сообщения
+
+                self.messages.append(data)
+                self.update_chat_display()  # 🔄 Обновляем чат
+        except Exception as e:
+            print(f"❌ [WebSocket] Ошибка: {e}")
 
     def load_user_data(self):
         """Загрузка реальных данных пользователя с сервера"""
@@ -257,40 +274,30 @@ class ChatInterface:
         return AuthApp.translate_static(self.language, text)
 
     def send_message(self, e):
-        """Отправка сообщения на сервер"""
+        """✉️ Отправка сообщения через WebSocket"""
         message = self.new_message.value.strip()
         if not message:
             return
 
         timestamp = datetime.now().strftime("%H:%M:%S")
 
-        # Локально добавляем сообщение в список перед отправкой
+        data = {"user": self.username, "text": message}
+
+        # 🔥 Локально добавляем в UI, чтобы сообщение сразу появилось
         self.messages.append({
             "user": self.username,
             "text": message,
             "time": timestamp
         })
-        self.update_chat_display()  # Обновляем UI немедленно
+        self.update_chat_display()
 
-        try:
-            headers = {
-                "Authorization": f"Token {self.auth_token}",
-                "Content-Type": "application/json"
-            }
-            response = requests.post(
-                "http://127.0.0.1:8000/api/messages/",
-                json={"text": message},
-                headers=headers
-            )
-            if response.status_code != 201:
-                logging.error(f"Ошибка API: {response.status_code}")
-        except Exception as e:
-            logging.error(f"Ошибка отправки: {str(e)}")
+        # 📡 Отправляем через WebSocket
+        if self.ws:
+            asyncio.create_task(self.ws.send(json.dumps(data)))
 
+        # 🧹 Очищаем поле ввода
         self.new_message.value = ""
         self.page.update()
-        print(response.status_code, response.text)
-
 
     def load_messages(self):
         """Загрузка сообщений с сервера"""

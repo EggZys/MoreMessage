@@ -1,20 +1,43 @@
 {% extends 'base.html' %}
-{% block title %}Register{% endblock %}
+{% block title %}Регистрация{% endblock %}
 {% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
 <main class="auth-container">
-    <h1 class="auth-title">Регистрация</h1>
-    <form method="post" class="auth-form">
-        {% csrf_token %}
-        {% for field in form %}
-            <div>
-                {{ field.label }}
+    <div class="glass-card">
+        <h2 class="gradient-text">Создать аккаунт</h2>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="input-group">
                 {{ field }}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <i class="fas 
+                    {% if field.name == 'username' %}fa-user
+                    {% elif field.name == 'email' %}fa-envelope
+                    {% else %}fa-lock
+                    {% endif %}">
+                </i>
+                {% if field.errors %}
+                <div class="error-message">
+                    {{ field.errors.0 }}
+                </div>
+                {% endif %}
             </div>
-        {% endfor %}
-        <button type="submit" class="form-button">Зарегистрироваться</button>
-    </form>
-    <p class="auth-link">
-        Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
-    </p>
+            {% endfor %}
+
+            <button type="submit" class="auth-button">
+                <i class="fas fa-user-plus"></i> Зарегистрироваться
+            </button>
+
+            <div class="auth-links">
+                <p class="footer-link">
+                    Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a>
+                </p>
+            </div>
+        </form>
+    </div>
 </main>
 {% endblock %}

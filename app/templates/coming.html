@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Страница в разработке{% endblock %}
+{% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
+<header>
+    <nav class="nav-container">
+        <a class="logo" href="{% url 'home' %}">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'home' %}" class="nav-button primary-btn">
+                <i class="fas fa-arrow-left"></i> Назад
+            </a>
+        </div>
+    </nav>
+</header>
+
+<main class="hero-section" style="padding: 15vh 5%">
+    <div class="construction-content" style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <div class="hero-icon" style="position: relative; margin-bottom: 3rem;">
+            <div class="gear-icon gear-1">
+                <i class="fas fa-cog" style="font-size: 4rem; color: var(--primary);"></i>
+            </div>
+            <div class="main-icon" style="position: relative; z-index: 2;">
+                <i class="fas fa-tools" style="font-size: 8rem; background: var(--gradient); 
+                   -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+            </div>
+            <div class="gear-icon gear-2">
+                <i class="fas fa-cog" style="font-size: 3rem; color: var(--secondary);"></i>
+            </div>
+        </div>
+
+        <h1 class="hero-title" style="font-size: 3.5rem; margin-bottom: 1.5rem;">
+            Страница в активной 
+            <span style="background: var(--gradient); -webkit-background-clip: text; 
+               -webkit-text-fill-color: transparent;">разработке</span>
+        </h1>
+        
+        <p class="hero-description" style="font-size: 1.25rem; color: #A1A1AA; max-width: 600px; margin: 0 auto 2rem;">
+            Мы усердно работаем над созданием чего-то потрясающего! Возвращайтесь позже, чтобы первым увидеть результат.
+        </p>
+
+        <div class="progress-indicator" style="max-width: 400px; margin: 2rem auto;">
+            <div class="progress-bar" style="height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px;">
+                <div class="progress-fill" style="width: 75%; height: 100%; background: var(--gradient); 
+                     border-radius: 4px; position: relative;">
+                    <div class="progress-glow" style="position: absolute; width: 50px; height: 100%; 
+                         background: rgba(255,255,255,0.3); animation: progress-glow 2s infinite;"></div>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--primary);">
+                Завершено: 75%
+            </div>
+        </div>
+
+        <div class="social-links" style="margin-top: 3rem; justify-content: center; gap: 1.5rem;">
+            <a href="#" class="social-link hover-scale" style="font-size: 1.5rem;">
+                <i class="fas fa-envelope"></i>
+            </a>
+            <a href="#" class="social-link hover-scale" style="font-size: 1.5rem;">
+                <i class="fab fa-telegram"></i>
+            </a>
+            <a href="#" class="social-link hover-scale" style="font-size: 1.5rem;">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </div>
+</main>
+<style>
+    .construction-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .gear-icon {
+        position: absolute;
+        animation: rotate linear infinite;
+    }
+    
+    .gear-1 {
+        top: -20px;
+        left: 20%;
+        animation-duration: 12s;
+    }
+    
+    .gear-2 {
+        bottom: -10px;
+        right: 20%;
+        animation-duration: 10s;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes progress-glow {
+        0% { left: -50px; }
+        100% { left: calc(100% + 50px); }
+    }
+    
+    .progress-fill {
+        transition: width 0.5s ease;
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: scale(1.15);
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem !important;
+        }
+        .main-icon i {
+            font-size: 6rem !important;
+        }
+        .gear-icon i {
+            font-size: 2.5rem !important;
+        }
+    }
+</style>
+{% endblock %}
