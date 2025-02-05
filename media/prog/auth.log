@@ -71,3 +71,34 @@
 2025-02-05 00:24:14,982 - INFO - Данные от сервера: [{'id': 3, 'text': 'Привет!', 'created_at': '2025-02-04T19:02:28.615146Z'}, {'id': 2, 'text': 'Привет!', 'created_at': '2025-02-04T15:52:01.050951Z'}, {'id': 1, 'text': 'nvvhj', 'created_at': '2025-02-01T22:03:36.639068Z'}]
 2025-02-05 00:24:14,983 - ERROR - Ошибка загрузки сообщений: 'user'
 2025-02-05 00:24:14,984 - ERROR - Ошибка получения токена: no running event loop
+2025-02-05 10:54:49,470 - INFO - Assets path configured: C:\Users\green\OneDrive\Рабочий стол\MoreMessages\project\media\prog\assets
+2025-02-05 10:54:49,473 - INFO - Starting up TCP server on localhost:63528
+2025-02-05 10:54:49,476 - INFO - Flet app has started...
+2025-02-05 10:54:49,483 - INFO - App URL: tcp://localhost:63528
+2025-02-05 10:54:49,483 - INFO - Starting Flet View app...
+2025-02-05 10:54:49,485 - INFO - Looking for Flet executable at: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:54:49,485 - INFO - Flet View found in: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:54:49,729 - INFO - App session started
+2025-02-05 10:55:04,518 - WARNING - Failed login attempt: EggZys
+2025-02-05 10:55:13,947 - INFO - Assets path configured: C:\Users\green\OneDrive\Рабочий стол\MoreMessages\project\media\prog\assets
+2025-02-05 10:55:13,949 - INFO - Starting up TCP server on localhost:63552
+2025-02-05 10:55:13,952 - INFO - Flet app has started...
+2025-02-05 10:55:13,958 - INFO - App URL: tcp://localhost:63552
+2025-02-05 10:55:13,958 - INFO - Starting Flet View app...
+2025-02-05 10:55:13,960 - INFO - Looking for Flet executable at: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:55:13,960 - INFO - Flet View found in: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:55:14,189 - INFO - App session started
+2025-02-05 10:55:39,040 - INFO - Данные от сервера: [{'id': 3, 'text': 'Привет!', 'created_at': '2025-02-04T19:02:28.615146Z'}, {'id': 2, 'text': 'Привет!', 'created_at': '2025-02-04T15:52:01.050951Z'}, {'id': 1, 'text': 'nvvhj', 'created_at': '2025-02-01T22:03:36.639068Z'}]
+2025-02-05 10:55:39,040 - ERROR - Ошибка загрузки сообщений: 'user'
+2025-02-05 10:55:39,042 - ERROR - Ошибка получения токена: no running event loop
+2025-02-05 10:56:20,533 - INFO - Assets path configured: C:\Users\green\OneDrive\Рабочий стол\MoreMessages\project\media\prog\assets
+2025-02-05 10:56:20,536 - INFO - Starting up TCP server on localhost:61357
+2025-02-05 10:56:20,539 - INFO - Flet app has started...
+2025-02-05 10:56:20,545 - INFO - App URL: tcp://localhost:61357
+2025-02-05 10:56:20,545 - INFO - Starting Flet View app...
+2025-02-05 10:56:20,546 - INFO - Looking for Flet executable at: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:56:20,547 - INFO - Flet View found in: C:\Users\green\AppData\Local\Programs\Python\Python312\Lib\site-packages\flet_desktop\app\flet\flet.exe
+2025-02-05 10:56:20,773 - INFO - App session started
+2025-02-05 10:56:33,519 - INFO - Данные от сервера: [{'id': 3, 'text': 'Привет!', 'created_at': '2025-02-04T19:02:28.615146Z'}, {'id': 2, 'text': 'Привет!', 'created_at': '2025-02-04T15:52:01.050951Z'}, {'id': 1, 'text': 'nvvhj', 'created_at': '2025-02-01T22:03:36.639068Z'}]
+2025-02-05 10:56:33,520 - ERROR - Ошибка загрузки сообщений: 'user'
+2025-02-05 10:56:33,521 - ERROR - Ошибка получения токена: no running event loop
