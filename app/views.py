@@ -20,20 +20,20 @@ from rest_framework import status
 
 def home_view(request):
     user = request.user
-    return render(request, 'home.html', context={'user': user})
+    users = len(CustomUser.objects.all())
+    messages = len(ChatMessage.objects.all())
+    return render(request, 'home.html', context={'user': user, 'messages': messages, 'users': users})
 
 def profile_view(request):
     user = request.user
-    return render(request, 'profile.html', {'user': user})
+    msgs = ChatMessage.objects.filter(user=request.user).count()
+    return render(request, 'profile.html', {'user': user, 'msgs': msgs})
 
 def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            
-            # Автоматически создаем токен для нового пользователя
-            Token.objects.create(user=user)
             
             login(request, user)
             return redirect('home')

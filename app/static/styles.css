@@ -190,15 +190,18 @@ header.scrolled {
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    padding-top: 60px;
+    border: 2px solid rgba();
 }
 
 .feature-card {
-    background: var(--dark);
+    background: #1b1b1f;
     padding: 2.5rem;
     border-radius: 1.5rem;
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .feature-card:hover {
@@ -568,7 +571,7 @@ footer {
 }
 
 .stat-card:hover {
-    background: linear-gradient(45deg, var(--card-bg), rgba(63, 63, 70, 0.5));
+    background: rgba(63, 63, 70, 0.5);
 }
 
 @media (max-width: 768px) {

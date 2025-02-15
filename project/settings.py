@@ -39,7 +39,7 @@ SECRET_KEY = 'django-insecure-9#m=(dtj(5k5358p8o&&msivq$0kd1t95(+#dh&!i%+aw7dz7=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ocwvrfmgf.localto.net', '127.0.0.1', 'xtvge5bl6.localto.net', '192.168.1.133', f'{ip_address}', '10.11.0.213:2283']
+ALLOWED_HOSTS = ['ocwvrfmgf.localto.net', '127.0.0.1', 'xtvge5bl6.localto.net', '192.168.1.133', f'{ip_address}', '10.11.0.213:2283', 'localhost']
 
 AUTH_USER_MODEL = 'app.CustomUser'
 
@@ -168,11 +168,9 @@ CSRF_TRUSTED_ORIGINS = [
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
+
 
 ASGI_APPLICATION = "project.asgi.application"

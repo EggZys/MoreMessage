@@ -1,28 +1,32 @@
 import flet as ft
+from flet import alignment
 import requests
 import json
 import re
 import time
 import logging
 from passlib.hash import django_pbkdf2_sha256
-from datetime import datetime
+import datetime
 import socket
-import asyncio
 import websockets
+import asyncio
+from crypter import cipher, uncipher
+import os
+
 
 hostname = socket.gethostname()
 ip_address = socket.gethostbyname(hostname)
 
 # Настройка логирования
 logging.basicConfig(
-    filename="auth.log",
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
+    format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
 # Конфигурация
-MAX_LOGIN_ATTEMPTS = 3  # Максимальное количество попыток входа
-BLOCK_TIME = 60  # Время блокировки в секундах после превышения попыток
+CREDENTIALS_FILE = "data/user_credentials.json"
+MAX_LOGIN_ATTEMPTS = 3
+BLOCK_TIME = 10
 
 class ChatInterface:
     def __init__(self, page, username, theme_mode, language, auth_token):
@@ -33,24 +37,38 @@ class ChatInterface:
         self.auth_token = auth_token
         self.messages = []
         self.ws = None  # WebSocket клиент
+        self.page.on_keyboard_event = self.handle_keyboard_event
+        self.reply_to_message = None  # Новое поле для хранения сообщения-оригинала
+        self.selected_message = None  # Для контекстного меню
         self.initialize_ui()
-        asyncio.create_task(self.connect_websocket())  # 🚀 Запускаем WebSocket
+
+        asyncio.run(self.connect_websocket())
     
     async def connect_websocket(self):
-        """🔌 Подключаемся к WebSocket"""
         try:
             self.ws = await websockets.connect("ws://127.0.0.1:8000/ws/chat/")
-            print("✅ Подключено к WebSocket!")
-
             while True:
                 message = await self.ws.recv()
                 data = json.loads(message)
-                print(f"📥 [WebSocket] Получено сообщение: {data}")  # 👀 Проверяем, приходят ли чужие сообщения
-
+                
+                # Дешифруем сообщение
+                if 'text' in data:
+                    data['text'] = uncipher(data['text'], mu=1)
+                
+                # Преобразуем строку created_at в datetime
+                if isinstance(data.get("created_at"), str):
+                    try:
+                        data["created_at"] = datetime.datetime.fromisoformat(
+                            data["created_at"].replace('Z', '+00:00')
+                        )
+                    except ValueError as e:
+                        data["created_at"] = datetime.datetime.now()
+                        logging.error(f"Ошибка преобразования даты в WebSocket: {e}")
+                
                 self.messages.append(data)
-                self.update_chat_display()  # 🔄 Обновляем чат
+                self.update_chat_display()
         except Exception as e:
-            print(f"❌ [WebSocket] Ошибка: {e}")
+            print(f"❌ WebSocket ошибка: {e}")
 
     def load_user_data(self):
         """Загрузка реальных данных пользователя с сервера"""
@@ -79,18 +97,26 @@ class ChatInterface:
             return self.default_user_data()
 
     def default_user_data(self):
+        """Данные пользователя по умолчанию"""
         return {
             "username": self.username,
-            "email": "неизвестно@example.com",
+            "email": "неизвестно@email.com",
             "avatar": "👤"
         }
 
     def initialize_ui(self):
-        """Инициализация красивого интерфейса чата"""
-        self.page.clean()
+        # Обновленная цветовая схема из CSS
         self.page.title = self.translate("Global Chat")
-        self.page.theme_mode = self.theme_mode
-        self.page.padding = 20
+        self.bg_color = "#18181B" if self.theme_mode == ft.ThemeMode.DARK else "#F4F4F5"
+        self.text_color = "#F4F4F5" if self.theme_mode == ft.ThemeMode.DARK else "#18181B"
+        self.primary_color = "#6366F1"
+        self.secondary_color = "#EC4899"
+
+        self.gradient = ft.LinearGradient(
+            begin=ft.alignment.top_left,
+            end=ft.alignment.bottom_right,
+            colors=["#6366F1", "#EC4899"]
+        )
         
         # Цветовая схема
         self.bg_color = ft.Colors.BLUE_GREY_900 if self.theme_mode == ft.ThemeMode.DARK else ft.Colors.GREY_100
@@ -127,25 +153,37 @@ class ChatInterface:
         )
         
         # Поле ввода сообщения
-        self.new_message = ft.TextField(
+        self.new_message_field = ft.TextField(
             label=self.translate("Напишите сообщение..."),
+            expand=True,
             multiline=True,
             min_lines=1,
-            max_lines=5,
-            border_radius=20,
+            max_lines=3,  # Уменьшено с 5
+            border_radius=15,
+            border_color=ft.Colors.TRANSPARENT,
             filled=True,
-            expand=True,
-            on_submit=self.send_message,
-            border_color=self.primary_color
+            bgcolor=ft.Colors.with_opacity(0.05, self.primary_color),
+            cursor_color=self.primary_color,
+            content_padding=10,  # Уменьшено
         )
-        
+
+        # Обновить стили кнопок:
         self.send_button = ft.IconButton(
             icon=ft.Icons.SEND_ROUNDED,
-            icon_size=32,
-            icon_color=self.primary_color,
+            icon_size=24,
+            icon_color=ft.Colors.WHITE,
             tooltip=self.translate("Отправить"),
-            on_click=self.send_message
-        )
+            bgcolor=self.primary_color,
+            width=40,
+            height=40,
+            on_click=self.send_message,
+            style=ft.ButtonStyle(
+                shape=ft.RoundedRectangleBorder(radius=10),
+                padding=10,
+                overlay_color=ft.Colors.with_opacity(0.1, ft.Colors.WHITE)
+            )
+        )   
+
         
         # Сборка интерфейса
         self.page.add(
@@ -163,16 +201,38 @@ class ChatInterface:
                     color=ft.Colors.BLACK if self.theme_mode == ft.ThemeMode.DARK else ft.Colors.GREY_400,
                 )
             ),
-            ft.Row(
-                [self.new_message, self.send_button],
-                spacing=15,
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                vertical_alignment=ft.CrossAxisAlignment.END
+            ft.Container(
+                content=ft.Row(
+                    [
+                        self.new_message_field,
+                        ft.Container(self.send_button, padding=ft.padding.only(left=10))
+                    ],
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=10
+                ),
+                padding=15,
+                bgcolor=self.bg_color,
+                border_radius=15,
+                shadow=ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=10,
+                    color=ft.Colors.with_opacity(0.1, ft.Colors.BLACK)
+                )
             )
         )
         
         self.load_messages()
         self.page.update()
+
+    def handle_keyboard_event(self, e: ft.KeyboardEvent):
+        """Обработка сочетаний клавиш"""
+        if e.key == "Enter" and e.shift:
+            self.send_message(e)
+            self.page.update()
+        elif e.key == "Enter" and not e.shift:
+            current_value = self.new_message_field.value
+            self.new_message_field.value = f"{current_value}\n"
+            self.new_message_field.update()
 
     def show_profile_modal(self, e):
         """Обновляем модальное окно с актуальными данными"""
@@ -274,33 +334,38 @@ class ChatInterface:
         return AuthApp.translate_static(self.language, text)
 
     def send_message(self, e):
-        """✉️ Отправка сообщения через WebSocket"""
-        message = self.new_message.value.strip()
+        message = self.new_message_field.value.strip()
         if not message:
             return
 
-        timestamp = datetime.now().strftime("%H:%M:%S")
-
-        data = {"user": self.username, "text": message}
-
-        # 🔥 Локально добавляем в UI, чтобы сообщение сразу появилось
-        self.messages.append({
+        # Добавляем информацию об ответе
+        encrypted_msg = cipher(message)
+        data = {
             "user": self.username,
-            "text": message,
-            "time": timestamp
-        })
-        self.update_chat_display()
+            "text": encrypted_msg,
+            "created_at": datetime.datetime.now().isoformat(),
+            "reply_to": self.reply_to_message["id"] if self.reply_to_message else None
+        }
 
-        # 📡 Отправляем через WebSocket
+        logging.info(f"📤 [CLIENT] Отправка WebSocket-сообщения: {data}")
+
         if self.ws:
-            asyncio.create_task(self.ws.send(json.dumps(data)))
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    asyncio.create_task(self.ws.send(json.dumps(data)))  # ✅ Работает в активном event loop
+                else:
+                    asyncio.run(self.ws.send(json.dumps(data)))  # Используется только если event loop не запущен
+            except RuntimeError:
+                asyncio.run(self.ws.send(json.dumps(data)))  # Если event loop отсутствует, создаём новый
 
         # 🧹 Очищаем поле ввода
-        self.new_message.value = ""
+        self.new_message_field.value = ""
+        if self.reply_to_message:
+            self.clear_reply(None)
         self.page.update()
 
     def load_messages(self):
-        """Загрузка сообщений с сервера"""
         try:
             headers = {
                 "Authorization": f"Token {self.auth_token}",
@@ -309,10 +374,8 @@ class ChatInterface:
             response = requests.get("http://127.0.0.1:8000/api/messages/", headers=headers)
             if response.status_code == 200:
                 messages_data = response.json()
-                logging.info(f"Данные от сервера: {messages_data}")
-                self.messages = []
+                self.messages = []  # Очистка перед загрузкой
                 for msg in messages_data:
-                    # Получаем имя пользователя через отдельный запрос
                     user_response = requests.get(
                         f"http://127.0.0.1:8000/api/users/{msg['user']}/",
                         headers=headers
@@ -321,63 +384,254 @@ class ChatInterface:
                         user_data = user_response.json()
                         username = user_data.get('username', 'unknown')
                     else:
-                        username = 'unknown'
-                    
+                        username = "unknown"  # Обработка ошибки
+
+                    try:
+                        created_at = datetime.datetime.fromisoformat(msg['created_at'].replace('Z', '+00:00'))
+                    except (ValueError, KeyError):
+                        print("⚠️ Ошибка даты, ставлю текущее время")
+                        created_at = datetime.datetime.now()
+
                     self.messages.append({
-                        "user": username,  # Используем полученное имя
-                        "text": msg['text'],
-                        "time": datetime.strptime(msg['created_at'], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%H:%M:%S")
+                        "id": msg['id'],  # Добавляем ID сообщения
+                        "user": username,
+                        "text": uncipher(msg['text'], mu=1),
+                        "created_at": created_at,
+                        "reply_to": msg.get('reply_to')  # Добавляем информацию об ответе
                     })
-                self.update_chat_display()
+
+                self.messages.sort(key=lambda x: x['created_at'])  # Сортировка по datetime
+                self.update_chat_display()  # Обновление отображения
+            else:
+                logging.error(f"Ошибка при загрузке сообщений: {response.status_code}")
+
         except Exception as e:
             logging.error(f"Ошибка загрузки сообщений: {str(e)}")
 
     def update_chat_display(self):
-        """Обновление отображения сообщений"""
-        self.chat_messages.controls = [
-            ft.ListTile(
-                title=ft.Text(f"{msg['user']} ({msg['time']})"),
-                subtitle=ft.Text(msg['text']),
-            ) for msg in self.messages
-        ]
+        """Обновление отображения сообщений с группировкой."""
+        sorted_messages = self.messages
+        controls = []
+        last_date = None
+        last_user = None
+        message_group = []
+
+        month_names = {
+            1: "января", 2: "февраля", 3: "марта", 4: "апреля",
+            5: "мая", 6: "июня", 7: "июля", 8: "августа",
+            9: "сентября", 10: "октября", 11: "ноября", 12: "декабря"
+        }
+
+        for msg in sorted_messages:
+            print(f"Сырые данные: {msg}")
+            # Добавляем 3 часа к времени
+            dt = msg["created_at"] + datetime.timedelta(hours=3)
+
+            current_date = dt.date()
+
+            if last_date != current_date:
+                if message_group:
+                    controls.append(self.create_message_group(message_group, last_user))
+                    message_group = []
+
+                date_text = f"{dt.day} {month_names[dt.month]} {dt.year} г."
+                controls.append(
+                    ft.Container(
+                        content=ft.Text(date_text, color=ft.Colors.GREY_600, size=12),
+                        alignment=ft.alignment.center,
+                        padding=10
+                    )
+                )
+                last_date = current_date
+
+            if msg["user"] != last_user and message_group:
+                controls.append(self.create_message_group(message_group, last_user))
+                message_group = []
+
+            message_group.append(msg)
+            last_user = msg["user"]
+
+        if message_group:
+            controls.append(self.create_message_group(message_group, last_user))
+
+        self.chat_messages.controls = controls
         self.page.update()
+
+        # Прокрутка к последнему сообщению после обновления
+        self.chat_messages.scroll_to(offset=0, duration=0.1)
     
     def create_message_bubble(self, message: dict):
         is_my_message = message["user"] == self.username
-        return ft.Container(
-            content=ft.Column([
-                ft.Text(
-                    f"{message['user']} • {message['time']}",
-                    size=12,
-                    color=ft.Colors.GREY_500
-                ),
-                ft.Text(
-                    message["text"], 
-                    size=16,
-                    color=self.text_color,
-                    width=300,  # Фиксированная ширина
-                    max_lines=10,
-                    overflow=ft.TextOverflow.ELLIPSIS
-                )
-            ], spacing=5),
-            bgcolor=self.primary_color if is_my_message else ft.Colors.ON_SURFACE_VARIANT,
-            padding=15,
-            border_radius=15,
-            alignment=ft.alignment.center_left,
-            margin=ft.margin.only(
-                left=100 if not is_my_message else 0,
-                right=0 if not is_my_message else 100
-            ),
-            width=300  # Ширина контейнера
+        adjusted_time = (message["created_at"] + datetime.timedelta(hours=3)).strftime("%H:%M")
+
+        # Контейнер времени
+        time_label = ft.Text(
+            adjusted_time,
+            color=ft.Colors.GREY_600,
+            size=12,
+            opacity=1.0,  # Теперь ВСЕГДА видно
         )
 
+        # Основной контейнер сообщения
+        message_row = ft.Row(
+            controls=[
+                ft.Container(
+                    content=ft.Column([
+                        ft.Text(
+                            f"{message['user']}",
+                            size=12,
+                            color=self.primary_color if is_my_message else ft.Colors.GREY_600,
+                        ),
+                        ft.Text(
+                            message["text"],
+                            size=16,
+                            color=ft.Colors.WHITE if is_my_message else ft.Colors.BLACK,
+                        ),
+                        time_label  # Просто вставляем время сразу
+                    ], spacing=5),
+                    bgcolor=self.primary_color if is_my_message else self.secondary_color,
+                    padding=15,
+                    border_radius=15,
+                )
+            ],
+            spacing=10,
+            vertical_alignment=ft.CrossAxisAlignment.START,
+        )
 
-    def update_chat_display(self):
-        """Обновление отображения с красивыми сообщениями"""
-        self.chat_messages.controls = [
-            self.create_message_bubble(msg) for msg in self.messages
-        ]
+        return message_row  # Возвращаем строку сообщения
+    
+    def create_message_group(self, messages, user):
+        is_my_message = user == self.username
+        other_bg_color = "#E8F5E9" if self.theme_mode == ft.ThemeMode.LIGHT else "#2E3440"
+        other_text_color = "#2E7D32" if self.theme_mode == ft.ThemeMode.LIGHT else "#88C0D0"
+        
+        # Контекстное меню
+        menu_items = []
+        if is_my_message:
+            menu_items.append(
+                ft.PopupMenuItem(
+                    text=self.translate("Удалить"),
+                    icon=ft.icons.DELETE,
+                    on_click=lambda e, msg=messages[0]: self.delete_message(msg)
+                )
+            )
+        menu_items.extend([
+            ft.PopupMenuItem(
+                text=self.translate("Ответить"),
+                icon=ft.icons.REPLY,
+                on_click=lambda e, msg=messages[0]: self.set_reply_to(msg)
+            ),
+            ft.PopupMenuItem(
+                text=self.translate("Копировать"),
+                icon=ft.icons.CONTENT_COPY,
+                on_click=lambda e, msg=messages[0]: self.copy_message(msg)
+            )
+        ])
+        
+        header = ft.Row(
+            [
+                ft.Text(
+                    f"{user}",
+                    weight=ft.FontWeight.BOLD,
+                    color=self.primary_color if is_my_message else ft.Colors.GREY_800,
+                    size=14
+                ),
+                ft.Text(
+                    messages[0]["created_at"].strftime("%H:%M"),
+                    color=ft.Colors.GREY_600,
+                    size=12
+                )
+            ], 
+            spacing=5,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.END if not is_my_message else ft.MainAxisAlignment.START
+        )
+        
+        message_bubbles = ft.Column(
+            [
+                ft.Container(
+                    content=ft.Text(
+                        msg["text"],
+                        color=other_text_color if not is_my_message else ft.Colors.WHITE,
+                        size=16,
+                        selectable=True
+                    ),
+                    bgcolor=self.primary_color if is_my_message else other_bg_color,
+                    border=ft.border.all(1, "#C8E6C9" if self.theme_mode == ft.ThemeMode.LIGHT else "#434C5E"),
+                    padding=ft.padding.symmetric(horizontal=15, vertical=10),
+                    border_radius=15,
+                    margin=ft.margin.only(bottom=3),
+                    alignment=ft.alignment.center_right if not is_my_message else ft.alignment.center_left,
+                ) for msg in messages
+            ],
+            spacing=3
+        )
+        
+        return ft.Container(
+            content=ft.Column([header, message_bubbles], spacing=5),
+            margin=ft.margin.only(
+                left=0 if is_my_message else 100,
+                right=100 if is_my_message else 0
+            ),
+            alignment=ft.alignment.center_right if not is_my_message else ft.alignment.center_left,
+            width=None,  # Убираем фиксированную ширину
+        )
+
+    def set_reply_to(self, message):
+        self.reply_to_message = message
+        self.show_reply_header()
+
+    def show_reply_header(self):
+        # Добавляем строку с информацией об ответе
+        self.reply_header = ft.Row(
+            [
+                ft.Icon(ft.icons.REPLY, color=self.primary_color, size=20),
+                ft.Text(
+                    f"Отвечая на {self.reply_to_message['user']}: {self.reply_to_message['text'][:30]}...",
+                    color=self.primary_color,
+                    italic=True
+                ),
+                ft.IconButton(
+                    icon=ft.icons.CLOSE,
+                    icon_size=20,
+                    on_click=self.clear_reply,
+                    tooltip=self.translate("Отменить ответ")
+                )
+            ],
+            visible=True
+        )
+        
+        # Вставляем перед полем ввода
+        if not hasattr(self, 'reply_header'):
+            self.page.controls.insert(-1, ft.Container(
+                content=self.reply_header,
+                padding=ft.padding.only(left=15, top=5, bottom=5)
+            ))
         self.page.update()
+
+    def clear_reply(self, e):
+        self.reply_to_message = None
+        self.reply_header.visible = False
+        self.page.update()
+
+    def copy_message(self, message):
+        self.page.set_clipboard(message["text"])
+        self.page.show_snack_bar(
+            ft.SnackBar(ft.Text(self.translate("Сообщение скопировано в буфер")), open=True)
+        )
+
+    def delete_message(self, message):
+        try:
+            headers = {"Authorization": f"Token {self.auth_token}"}
+            response = requests.delete(
+                f"http://127.0.0.1:8000/api/messages/{message['id']}/",
+                headers=headers
+            )
+            if response.status_code == 204:
+                self.messages = [m for m in self.messages if m.get('id') != message['id']]
+                self.update_chat_display()
+        except Exception as e:
+            logging.error(f"Ошибка удаления: {e}")
 
     def logout(self, e):
         """Выход с полной перезагрузкой интерфейса"""
@@ -387,11 +641,48 @@ class ChatInterface:
 class AuthApp:
     def __init__(self, page: ft.Page):
         self.page = page
+        self.auth_token = page.client_storage.get("auth_token")
         self.login_attempts = 3
         self.last_failed_attempt = None
-        self.language = "ru"  # По умолчанию русский язык
-        self.theme_mode = ft.ThemeMode.DARK  # По умолчанию темная тема
-        self.initialize_ui()
+        self.language = "ru"
+        self.theme_mode = ft.ThemeMode.DARK
+        self.auto_login_attempted = False  # Добавляем флаг
+        
+        # Инициализируем элементы интерфейса ПЕРЕД загрузкой данных
+        self.initialize_ui()  
+        
+        # Теперь загружаем данные, когда элементы уже созданы
+        self.load_credentials()
+
+    def load_credentials(self):
+        """Загрузка и автоматический вход"""
+        try:
+            with open(CREDENTIALS_FILE, "r") as f:
+                data = json.load(f)
+                decrypted_user = uncipher(data['username'], mu=1)
+                decrypted_pass = uncipher(data['password'], mu=1)
+                
+                if decrypted_user and decrypted_pass:
+                    self.username_field.value = decrypted_user
+                    self.password_field.value = decrypted_pass
+                    self.page.update()
+                    # Автоматический вход через 1 секунду
+                    time.sleep(1)
+                    self.login_click(None)
+        except Exception as e:
+            logging.info(f"Ошибка автоматического входа: {str(e)}")
+
+    def save_credentials(self, username, password):
+        """Сохранение учетных данных в файл"""
+        try:
+            data = {
+                'username': cipher(username),
+                'password': cipher(password)
+            }
+            with open(CREDENTIALS_FILE, "w") as f:
+                json.dump(data, f)
+        except Exception as e:
+            logging.error(f"Error saving credentials: {str(e)}")
 
     def initialize_ui(self):
         """Инициализация интерфейса."""
@@ -399,15 +690,16 @@ class AuthApp:
         self.page.theme_mode = self.theme_mode
         self.page.vertical_alignment = ft.MainAxisAlignment.CENTER
         self.page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-        self.page.bgcolor = ft.Colors.BLUE_GREY_900 if self.theme_mode == ft.ThemeMode.DARK else ft.Colors.GREY_100
+        self.page.bgcolor = "#18181B"  # Используем цвет из CSS
 
         # Элементы управления
         self.username_field = ft.TextField(
-            label=self.translate("Имя пользователя или Email"),
+            label=self.translate("Имя пользователя"),
             border_radius=15,
             prefix_icon=ft.Icons.PERSON,
             width=300,
-            on_change=self.validate_fields
+            on_change=self.validate_fields,
+            on_submit=lambda _: self.login_click(None)
         )
 
         self.password_field = ft.TextField(
@@ -417,7 +709,8 @@ class AuthApp:
             border_radius=15,
             prefix_icon=ft.Icons.LOCK,
             width=300,
-            on_change=self.validate_fields
+            on_change=self.validate_fields,
+            on_submit=lambda _: self.login_click(None)
         )
 
         self.error_banner = ft.Container(
@@ -482,76 +775,6 @@ class AuthApp:
             on_change=self.change_language
         )
 
-        # Элементы управления
-        self.username_field = ft.TextField(
-            label=self.translate("Имя пользователя или Email"),
-            border_radius=15,
-            prefix_icon=ft.Icons.PERSON,
-            width=300,
-            on_change=self.validate_fields
-        )
-
-        self.password_field = ft.TextField(
-            label=self.translate("Пароль"),
-            password=True,
-            can_reveal_password=True,
-            border_radius=15,
-            prefix_icon=ft.Icons.LOCK,
-            width=300,
-            on_change=self.validate_fields
-        )
-
-        self.error_banner = ft.Container(
-            bgcolor=ft.Colors.RED_700,
-            padding=10,
-            border_radius=10,
-            visible=False,
-            animate_opacity=300,
-            content=ft.Text("", color=ft.Colors.WHITE)
-        )
-
-        self.loading_indicator = ft.Container(
-            content=ft.Column(
-                [
-                    ft.ProgressRing(width=30, height=30, stroke_width=2),
-                    ft.Text(self.translate("Проверяем данные..."), size=12)
-                ],
-                spacing=10,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER
-            ),
-            visible=False,
-            animate_opacity=300,
-            alignment=ft.alignment.center
-        )
-
-        self.login_button = ft.ElevatedButton(
-            text=self.translate("Войти"),
-            icon=ft.Icons.LOGIN,
-            style=ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=20,
-                bgcolor=ft.Colors.BLUE_700,
-                overlay_color=ft.Colors.BLUE_900
-            ),
-            width=200,
-            animate_opacity=300,
-            on_click=self.login_click
-        )
-
-        # Капча
-        self.captcha_field = ft.TextField(
-            label=self.translate("Введите капчу"),
-            border_radius=15,
-            width=300,
-            visible=False
-        )
-        self.captcha_image = ft.Image(
-            src="https://via.placeholder.com/150",
-            width=150,
-            height=50,
-            visible=False
-        )
-
         # Сборка интерфейса
         self.main_card = ft.Card(
             content=ft.Container(
@@ -576,10 +799,29 @@ class AuthApp:
                 width=400
             ),
             elevation=15,
-            color=ft.Colors.BLUE_GREY_800 if self.theme_mode == ft.ThemeMode.DARK else ft.Colors.WHITE
+            color=ft.Colors.with_opacity(0.65, "#27272A")  # Исправленный метод with_opacity
         )
 
         self.page.add(self.main_card)
+    
+    def auto_login(self):
+        try:
+            headers = {"Authorization": f"Token {self.auth_token}"}
+            response = requests.get("http://127.0.0.1:8000/api/users/me/", headers=headers)
+            if response.status_code == 200:
+                user_data = response.json()
+                self.page.clean()
+                ChatInterface(
+                    self.page,
+                    user_data['username'],
+                    self.theme_mode,
+                    self.language,
+                    self.auth_token
+                )
+                return True
+        except Exception as e:
+            logging.error(f"Auto-login error: {e}")
+        return False
 
     def translate(self, text):
         """Локализация текста."""
@@ -626,6 +868,10 @@ class AuthApp:
         self.initialize_ui()
 
     def validate_fields(self, e):
+        """Автовход при заполнении полей"""
+        if os.path.exists(CREDENTIALS_FILE):
+            if len(self.username_field.value) > 3 and len(self.password_field.value) > 5:
+                self.login_click(None)
         """Валидация полей ввода."""
         email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         is_email_valid = re.match(email_regex, self.username_field.value) if "@" in self.username_field.value else True
@@ -640,6 +886,10 @@ class AuthApp:
         self.page.update()
 
     def login_click(self, e):
+        """Обработчик входа (с автоматическим вызовом)"""
+        if self.auto_login_attempted:  # Защита от повторных попыток
+            return
+        self.auto_login_attempted = True
         """Обработчик нажатия на кнопку входа."""
         if self.block_login():
             return
@@ -660,28 +910,30 @@ class AuthApp:
         time.sleep(1)  # Имитация задержки сети
 
         if self.validate_credentials(username, password):
-            # Получаем токен после успешного входа
             try:
                 response = requests.post(
                     "http://127.0.0.1:8000/api-token-auth/",
                     data={"username": username, "password": password}
                 )
                 if response.status_code == 200:
+                    self.auto_login_attempted = False
                     auth_token = response.json()['token']
                     self.page.client_storage.set("auth_token", auth_token)
+                    self.page.client_storage.set("username", username)
+                    self.save_credentials(username, password)  # Перенесено сюда
                     self.page.clean()
                     ChatInterface(
                         self.page, 
                         username, 
                         self.theme_mode,
                         self.language,
-                        auth_token  # Явно передаем токен
+                        auth_token
                     )
                     logging.info(f"Успешный вход: {username}")
             except Exception as e:
                 logging.error(f"Ошибка получения токена: {str(e)}")
         else:
-            self.login_attempts += 1
+            self.login_attempts -= 1  # Уменьшаем количество оставшихся попыток вместо увеличения
             self.last_failed_attempt = time.time()
             self.toggle_ui_elements(False)
             self.error_banner.content.value = self.translate("Неверные учетные данные!")
@@ -788,7 +1040,4 @@ def main(page: ft.Page):
     AuthApp(page)
 
 if __name__ == "__main__":
-
     ft.app(target=main)
-    print(f"Hostname: {hostname}")
-    print(f"IP Address: {ip_address}")
