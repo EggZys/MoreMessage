@@ -29,7 +29,6 @@
         </nav>
     </header>
 {% endif %}
-
 <section class="hero-section">
     <div class="hero-content">
         <div class="hero-text">
@@ -39,20 +38,25 @@
                 Защищённое соединение и инновационные функции для вашего комфорта.
             </p>
             <div class="hero-cta">
-                <a href="#download" class="nav-button primary-btn" style="padding: 1.2rem 2.5rem;">
-                    Начать бесплатно
-                </a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'download' %}" class="nav-button primary-btn" style="padding: 1.2rem 2.5rem;">
+                        Начать бесплатно
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-button primary-btn" style="padding: 1.2rem 2.5rem;">
+                        Начать бесплатно
+                    </a>
+                {% endif %}
                 <a href="#features" class=" primary-batn nav-button" style="padding: 1.2rem 2.5rem;">
                     Узнать больше
                 </a>
             </div>
         </div>
         <div class="hero-image">
-            <img src="https://dummyimage.com/600x500/6366F1/fff.png&text=App+Preview" alt="Интерфейс MoreMessage">
+            <img src="../static/app_preview.png" alt="Интерфейс MoreMessage">
         </div>
     </div>
 </section>
-
 <section class="features-section" id="features">
     <h2 class="section-title">Превосходство в деталях</h2>
     <div class="features-grid">
@@ -73,7 +77,6 @@
         </div>
     </div>
 </section>
-
 <section class="stats-section">
     <div class="stats-grid">
         <div class="stat-card">
@@ -90,19 +93,23 @@
         </div>
     </div>
 </section>
-
 <section class="cta-section">
     <div class="cta-content">
         <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Готовы начать?</h2>
         <p style="margin-bottom: 2rem; color: #A1A1AA;">
             Присоединяйтесь к революции в мире мессенджеров
         </p>
-        <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small" style="padding: 1.2rem 3rem;">
-            <i class="fas fa-rocket"></i> Начать сейчас
-        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small" style="padding: 1.2rem 3rem;">
+                <i class="fas fa-rocket"></i> Начать сейчас
+            </a>
+        {% else %}
+            <a href="{% url 'login' %}" class="nav-button primary-btn cta-button-small" style="padding: 1.2rem 3rem;">
+                <i class="fas fa-rocket"></i> Начать сейчас
+            </a>
+        {% endif %}
     </div>
 </section>
-{% include 'footer.html' %}
 <script>
     // Анимация хедера при скролле
     window.addEventListener('scroll', () => {

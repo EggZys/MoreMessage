@@ -13,6 +13,11 @@ from .views import (
     ChatMessageListCreate,
     UserDetailView,
     coming_view,
+    about,
+    career,
+    support,
+    status,
+    contact
 )
 from rest_framework.authtoken.views import obtain_auth_token
 
@@ -30,5 +35,10 @@ urlpatterns = [
     path('download/windows/', download_file, name='download_windows'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path("api/users/<str:username>/", UserDetailView.as_view(), name="user-detail"),
-    path('coming/', coming_view, name='coming')
+    path('coming/', coming_view, name='coming'),
+    path('about/', about, name='about'),
+    path('career/', career, name='career'),
+    path('support/', support, name='support'),
+    path('status/', status, name='status'),
+    path('contact/', contact, name='contact'),
 ]

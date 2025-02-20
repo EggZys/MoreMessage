@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, ChatMessage
+from .models import CustomUser, ChatMessage, Server, Stat
 
 # Создание кастомного интерфейса для CustomUser
 class CustomUserAdmin(UserAdmin):
@@ -23,3 +23,5 @@ class CustomUserAdmin(UserAdmin):
 # Регистрируем модель CustomUser с кастомным интерфейсом
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(ChatMessage)
+admin.site.register(Server)
+admin.site.register(Stat)

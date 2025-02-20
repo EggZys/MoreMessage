@@ -17,7 +17,6 @@
         </div>
     </nav>
 </header>
-
 <main class="hero-section" style="padding-top: 8rem;">
     <div class="hero-content" style="max-width: 1200px;">
         {% if user.is_authenticated %}
@@ -51,7 +50,6 @@
                 </span>
             </div>
         </div>
-
         <div class="stats-grid" style="margin: 4rem 0; position: relative;">
             <div class="stats-decoration" style="position: absolute; width: 100%; height: 100%; 
                  background: var(--gradient); filter: blur(80px); opacity: 0.1; z-index: -1;"></div>
@@ -63,7 +61,6 @@
                     <div style="width: 65%; height: 100%; background: var(--primary); border-radius: 2px;"></div>
                 </div>
             </div>
-            
             <div class="stat-card hover-scale" style="transform-origin: center;">
                 <div class="stat-number pulse">Soon...</div>
                 <p><i class="fas fa-user-friends gradient-icon"></i> Друзей</p>
@@ -71,7 +68,6 @@
                     <div style="width: 85%; height: 100%; background: var(--secondary); border-radius: 2px;"></div>
                 </div>
             </div>
-            
             <div class="stat-card hover-scale" style="transform-origin: center;">
                 <div class="stat-number pulse">Soon...</div>
                 <p><i class="fas fa-calendar-alt gradient-icon"></i> Дней активности</p>
@@ -80,7 +76,6 @@
                 </div>
             </div>
         </div>
-
         <div class="activity-timeline" style="background: var(--card-bg); border-radius: 1.5rem; padding: 2rem; 
              margin: 3rem 0; position: relative; overflow: hidden;">
             <h3 style="margin-bottom: 1.5rem; color: var(--light);">
@@ -100,11 +95,9 @@
             </div>
             <!-- Добавьте больше элементов активности -->
         </div>
-
         {% else %}
         <!-- Существующий контент для неавторизованных пользователей -->
         {% endif %}
     </div>
-</main>
-{% include 'footer.html' %}
+</main> 
 {% endblock %}

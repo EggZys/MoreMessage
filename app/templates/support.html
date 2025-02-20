@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Поддержка{% endblock %}
+{% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
+Copy
+<header>
+    <nav class="nav-container">
+        <a class="logo" href="/">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small">
+                <i class="fas fa-download"></i> Скачать
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<section class="about-section" style="min-height: auto; padding: 8rem 5% 4rem;">
+    <div class="glass-card" style="max-width: 1200px;">
+        <h2 class="gradient-text">Центр поддержки</h2>
+        <div class="support-options">
+            <div class="features-grid">
+                <div class="feature-card hover-scale">
+                    <i class="fas fa-question-circle feature-icon"></i>
+                    <h3>Частые вопросы</h3>
+                    <p>Ответы на популярные вопросы в базе знаний</p>
+                    <a href="#" class="footer-link">Посмотреть FAQ</a>
+                </div>
+                
+                <div class="feature-card hover-scale">
+                    <i class="fas fa-comments feature-icon"></i>
+                    <h3>Онлайн-чат</h3>
+                    <p>Мгновенная помощь от нашей поддержки</p>
+                    <a href="#" class="footer-link">Начать чат</a>
+                </div>
+                
+                <div class="feature-card hover-scale">
+                    <i class="fas fa-envelope feature-icon"></i>
+                    <h3>Эл. почта</h3>
+                    <p>Напишите нам на greendemon2283@gmail.com</p>
+                    <a href="mailto:greendemon2283@gmail.com" class="footer-link">Написать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

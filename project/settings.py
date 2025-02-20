@@ -39,7 +39,7 @@ SECRET_KEY = 'django-insecure-9#m=(dtj(5k5358p8o&&msivq$0kd1t95(+#dh&!i%+aw7dz7=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ocwvrfmgf.localto.net', '127.0.0.1', 'xtvge5bl6.localto.net', '192.168.1.133', f'{ip_address}', '10.11.0.213:2283', 'localhost']
+ALLOWED_HOSTS = ['ocwvrfmgf.localto.net', '127.0.0.1', 'xtvge5bl6.localto.net', '192.168.1.133', f'{ip_address}', '10.11.0.213:2283', 'localhost', '10.14.34.69']
 
 AUTH_USER_MODEL = 'app.CustomUser'
 

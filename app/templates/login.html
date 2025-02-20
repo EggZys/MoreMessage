@@ -9,23 +9,19 @@
             <h2 class="gradient-text">Вход в аккаунт</h2>
             <form method="post" action="{% url 'login' %}" class="auth-form">
                 {% csrf_token %}
-                
                 <div class="input-group">
                     <input type="text" id="username" name="username" required>
                     <label for="username">Имя пользователя</label>
                     <i class="fas fa-user"></i>
                 </div>
-                
                 <div class="input-group">
                     <input type="password" id="password" name="password" required>
                     <label for="password">Пароль</label>
                     <i class="fas fa-lock"></i>
                 </div>
-
                 <button type="submit" class="auth-button">
                     <i class="fas fa-sign-in-alt"></i> Войти
                 </button>
-
                 <div class="auth-links">
                     <a href="{% url 'register' %}" class="footer-link">Создать аккаунт</a>
                     <a href="{% url 'coming' %}" class="footer-link">Забыли пароль?</a>

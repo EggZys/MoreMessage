@@ -21,3 +21,17 @@ class ChatMessage(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
+
+class Stat(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.name
+
+class Server(models.Model):
+    name = models.CharField(max_length=100)
+    status = models.ForeignKey(Stat, on_delete=models.CASCADE)
+    load_percentage = models.IntegerField()
+
+    def __str__(self):
+        return self.name

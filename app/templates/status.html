@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Статус{% endblock %}
+{% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+<header>
+    <nav class="nav-container">
+        <a class="logo" href="/">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small">
+                <i class="fas fa-download"></i> Скачать
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+<section class="about-section" style="min-height: auto; padding: 8rem 5% 4rem;">
+    <div class="glass-card" style="max-width: 1200px;">
+        <h2 class="gradient-text">Статус сервисов</h2>
+        <div class="status-indicators">
+            <div class="status-card">
+                <div class="status-header">
+                    <i class="fas fa-server feature-icon"></i>
+                    <h3>Общий статус</h3>
+                </div>
+                <div class="status-body">
+                    <span class="status-dot {% if status.overall == 'operational' %}operational{% else %}outage{% endif %}"></span>
+                    {{ status.overall_status }}
+                </div>
+            </div>
+            
+            <div class="features-grid" style="margin-top: 2rem;">
+                {% for service in status.services %}
+                <div class="feature-card hover-scale">
+                    <i class="fas {{ service.icon }} feature-icon"></i>
+                    <h3>{{ service.name }}</h3>
+                    <div class="status-info">
+                        <span class="status-indicator {{ service.status }}"></span>
+                        {{ service.status_text }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <hr>
+            <h2 class="gradient-text">Наши серверы:</h1>
+            <div class="features-grid" style="margin-top: 0px;">
+                {% for server in servers %}
+                <div class="feature-card hover-scale">
+                    <i class="fas fa-server feature-icon"></i>
+                    <h3>{{ server.name }}</h3>
+                    <div class="status-info">
+                        {% if server.status.name == 'Онлайн' %}
+                            <span class="online"></span>
+                            {{ server.status }}
+                        {% elif server.status.name == 'Спит' %}
+                            <span class="sleeping"></span>
+                            {{ server.status }}
+                        {% else %}
+                            <span class="offline"></span>
+                            {{ server.status }}
+                        {% endif %}
+                        <div class="load-bar-container">
+                            <div class="load-bar" style="width: {{ server.load_percentage }}%;"></div>
+                        </div>
+                        <p class="load-percentage">Загружен на {{ server.load_percentage }}%</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

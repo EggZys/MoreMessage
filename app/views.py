@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.core.serializers import serialize
 from .forms import RegistrationForm
-from .models import CustomUser
+from .models import CustomUser, Server
 import os
 from django.conf import settings
 from django.http import HttpResponse
@@ -46,7 +46,7 @@ def download_view(request):
 
 def download_file(request):
     # Формируем полный путь к файлу
-    file_path = os.path.join(settings.MEDIA_ROOT, 'prog', 'MoreMessage.exe')
+    file_path = os.path.join(settings.MEDIA_ROOT, 'prog', 'aga.txt')
     
     # Печатаем путь в консоль (или лог)
     print(f"Путь к файлу: {file_path}")
@@ -58,7 +58,7 @@ def download_file(request):
     # Если найден, возвращаем файл
     with open(file_path, 'rb') as file:
         response = HttpResponse(file.read(), content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="MoreMessage.exe"'
+        response['Content-Disposition'] = f'attachment; filename="aga.txt"'
         return response
 
 
@@ -95,3 +95,44 @@ class UserDetailView(APIView):
             })
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+def about(request):
+    users = len(CustomUser.objects.all())
+    return render(request, 'about.html', {'users': users})
+
+def career(request):
+    return render(request, 'career.html')
+
+def support(request):
+    return render(request, 'support.html')
+
+def status(request):
+    servers = Server.objects.all()
+    status_data = {
+        "overall": "outage",
+        "overall_status": "Не в сети.",
+        "services": [
+            {
+                "icon": "fa-server",
+                "name": "Сервер сообщений",
+                "status": "outage",
+                "status_text": "Выключен..."
+            },
+            {
+                "icon": "fa-database",
+                "name": "База данных",
+                "status": "outage",
+                "status_text": "Выключена..."
+            },
+            {
+                "icon": "fa-cloud",
+                "name": "Облачное хранилище",
+                "status": "outage",
+                "status_text": "Выключено..."
+            }
+        ]
+    }
+    return render(request, 'status.html', {'status': status_data, 'servers': servers})
+
+def contact(request):
+    return render(request, 'contact.html')

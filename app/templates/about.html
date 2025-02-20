@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}О нас{% endblock %}
+{% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
+<header>
+    <nav class="nav-container">
+        <a class="logo" href="/">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small">
+                <i class="fas fa-download"></i> Скачать
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+
+<section class="about-section" style="min-height: auto; padding: 8rem 5% 4rem;">
+    <div class="glass-card" style="max-width: 1200px;">
+        <h2 class="gradient-text">О нашей компании</h2>
+        <div class="about-content">
+            <div class="text-content">
+                <p class="hero-description">
+                    MoreMessage - это инновационная платформа для общения, созданная в 2024 году с целью 
+                    переосмыслить цифровую коммуникацию. Мы объединяем передовые технологии и 
+                    пользовательский опыт для создания безопасной и удобной среды общения.
+                </p>
+                <div class="stats-grid" style="margin: 3rem 0;">
+                    <div class="stat-card hover-scale">
+                        <div class="stat-number">{{users}}+</div>
+                        <p>Активных пользователей</p>
+                    </div>
+                    <div class="stat-card hover-scale">
+                        <div class="stat-number">150+</div>
+                        <p>Стран доступно</p>
+                    </div>
+                    <div class="stat-card hover-scale">
+                        <div class="stat-number">24/7</div>
+                        <p>Поддержка</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <h2 class="section-title">Наши принципы</h2>
+    <div class="features-grid">
+        <div class="feature-card hover-scale">
+            <i class="fas fa-lock feature-icon"></i>
+            <h3>Конфиденциальность</h3>
+            <p>Шифрование всех данных и строгая политика приватности</p>
+        </div>
+        <div class="feature-card hover-scale">
+            <i class="fas fa-heart feature-icon"></i>
+            <h3>Доступность</h3>
+            <p>Бесплатный сервис с открытым исходным кодом</p>
+        </div>
+        <div class="feature-card hover-scale">
+            <i class="fas fa-rocket feature-icon"></i>
+            <h3>Инновации</h3>
+            <p>Постоянное развитие и внедрение новых технологий</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

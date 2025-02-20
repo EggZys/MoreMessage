@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Карьера{% endblock %}
+{% block content %}
+<div class="blur-effect" style="top: -200px; left: -200px;"></div>
+<div class="blur-effect" style="bottom: -200px; right: -200px;"></div>
+
+Copy
+<header>
+    <nav class="nav-container">
+        <a class="logo" href="/">MoreMessage</a>
+        <div class="nav-buttons">
+            <a href="{% url 'download' %}" class="nav-button primary-btn cta-button-small">
+                <i class="fas fa-download"></i> Скачать
+            </a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Профиль
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="nav-button primary-btn">
+                    <i class="fas fa-user"></i> Войти
+                </a>
+            {% endif %}
+        </div>
+    </nav>
+</header>
+<section class="about-section" style="min-height: auto; padding: 8rem 5% 4rem;">
+    <div class="glass-card" style="max-width: 1200px;">
+        <h2 class="gradient-text">Присоединяйтесь к нашей команде</h2>
+        <div class="vacancies-list">
+            {% for vacancy in vacancies %}
+            <div class="feature-card hover-scale" style="text-align: left; margin: 2rem 0;">
+                <h3>{{ vacancy.title }}</h3>
+                <div class="vacancy-meta" style="margin: 1rem 0;">
+                    <span class="tag"><i class="fas fa-map-marker-alt"></i> {{ vacancy.location }}</span>
+                    <span class="tag"><i class="fas fa-briefcase"></i> {{ vacancy.type }}</span>
+                </div>
+                <p>{{ vacancy.description }}</p>
+                <a href="mailto:career@moremessage.com" class="nav-button primary-btn" style="margin-top: 1.5rem;">
+                    Откликнуться
+                </a>
+            </div>
+            {% empty %}
+            <div class="feature-card">
+                <h3>Сейчас нет открытых вакансий</h3>
+                <p>Следите за обновлениями в нашем телеграм-канале</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
